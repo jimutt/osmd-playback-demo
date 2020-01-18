@@ -50,6 +50,9 @@ export default class PlaybackEngine {
     this.sheet = osmd.sheet;
     this.cursor = osmd.cursor;
     this.denominator = this.sheet.playbackSettings.rhythm.denominator;
+    if (this.sheet.HasBPMInfo) {
+      this.setBpm(this.sheet.DefaultStartTempoInBpm);
+    }
 
     let instruments = this.sheet.Instruments.map(i => {
       return {
