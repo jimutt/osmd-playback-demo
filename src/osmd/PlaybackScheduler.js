@@ -1,4 +1,4 @@
-import StepQueue from "./StepQueue";
+import StepQueue from './StepQueue';
 
 export default class PlaybackScheduler {
   denominator;
@@ -23,13 +23,7 @@ export default class PlaybackScheduler {
 
   _loaderFutureTicks = new Set();
 
-  constructor(
-    denominator,
-    wholeNoteLength,
-    audioContext,
-    noteSchedulingCallback,
-    iterationCallback
-  ) {
+  constructor(denominator, wholeNoteLength, audioContext, noteSchedulingCallback, iterationCallback) {
     this.noteSchedulingCallback = noteSchedulingCallback;
     this.iterationCallback = iterationCallback;
     this.denominator = denominator;
@@ -48,10 +42,7 @@ export default class PlaybackScheduler {
 
   get _calculatedTick() {
     return (
-      this.currentTick +
-      Math.round(
-        (this.audioContextTime - this.currentTickTimestamp) / this.tickDuration
-      )
+      this.currentTick + Math.round((this.audioContextTime - this.currentTickTimestamp) / this.tickDuration)
     );
   }
 
@@ -62,15 +53,12 @@ export default class PlaybackScheduler {
   start() {
     this.playing = true;
     this.stepQueue.sort();
-    console.log("AudioContext time: ", this.audioContextTime);
-    console.log("Tick duration: ", this.tickDuration);
+    console.log('AudioContext time: ', this.audioContextTime);
+    console.log('Tick duration: ', this.tickDuration);
     this._audioContextStartTime = this.audioContext.currentTime;
     this.currentTickTimestamp = this.audioContextTime;
     if (!this._schedulerInterval) {
-      this._schedulerInterval = setInterval(
-        () => this._scheduleIterationStep(),
-        this._scheduleInterval
-      );
+      this._schedulerInterval = setInterval(() => this._scheduleIterationStep(), this._scheduleInterval);
     }
   }
 
@@ -106,9 +94,7 @@ export default class PlaybackScheduler {
 
     for (let entry of currentVoiceEntries) {
       for (let note of entry.notes) {
-        this._loaderFutureTicks.add(
-          thisTick + note.length.realValue * this._tickDenominator
-        );
+        this._loaderFutureTicks.add(thisTick + note.length.realValue * this._tickDenominator);
         let step = { tick: thisTick };
         this.stepQueue.add(step, note);
       }
@@ -129,8 +115,7 @@ export default class PlaybackScheduler {
       : undefined;
     while (
       nextTick &&
-      this.currentTickTimestamp +
-        (nextTick - this.currentTick) * this.tickDuration <=
+      this.currentTickTimestamp + (nextTick - this.currentTick) * this.tickDuration <=
         this.currentTickTimestamp + this._schedulePeriod
     ) {
       let step = this.stepQueue.steps[this.stepQueueIndex];

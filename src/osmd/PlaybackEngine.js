@@ -1,11 +1,11 @@
-import Soundfont from "soundfont-player";
-import PlaybackScheduler from "./PlaybackScheduler";
+import Soundfont from 'soundfont-player';
+import PlaybackScheduler from './PlaybackScheduler';
 
 const playbackStates = {
-  INIT: "INIT",
-  PLAYING: "PLAYING",
-  STOPPED: "STOPPED",
-  PAUSED: "PAUSED"
+  INIT: 'INIT',
+  PLAYING: 'PLAYING',
+  STOPPED: 'STOPPED',
+  PAUSED: 'PAUSED'
 };
 
 export default class PlaybackEngine {
@@ -39,16 +39,11 @@ export default class PlaybackEngine {
   }
 
   get wholeNoteLength() {
-    return Math.round(
-      (60 / this.playbackSettings.bpm) * this.denominator * 1000
-    );
+    return Math.round((60 / this.playbackSettings.bpm) * this.denominator * 1000);
   }
 
   async loadInstrument(instrumentName) {
-    this.playbackSettings.instrument = await Soundfont.instrument(
-      this.ac,
-      instrumentName
-    );
+    this.playbackSettings.instrument = await Soundfont.instrument(this.ac, instrumentName);
   }
 
   loadScore(osmd) {
@@ -62,7 +57,7 @@ export default class PlaybackEngine {
         id: i.id,
         voices: i.Voices.map(v => {
           return {
-            name: "Voice " + v.VoiceId,
+            name: 'Voice ' + v.VoiceId,
             id: v.VoiceId,
             volume: 1
           };
@@ -72,18 +67,14 @@ export default class PlaybackEngine {
 
     this.playbackSettings.volumes.instruments = instruments;
 
-    this.scheduler = new PlaybackScheduler(
-      this.denominator,
-      this.wholeNoteLength,
-      this.ac,
-      (delay, notes) => this._notePlaybackCallback(delay, notes)
+    this.scheduler = new PlaybackScheduler(this.denominator, this.wholeNoteLength, this.ac, (delay, notes) =>
+      this._notePlaybackCallback(delay, notes)
     );
     this._countAndSetIterationSteps();
   }
 
   async play() {
-    if (!this.playbackSettings.instrument)
-      await this.loadInstrument("acoustic_grand_piano");
+    if (!this.playbackSettings.instrument) await this.loadInstrument('acoustic_grand_piano');
     await this.ac.resume();
 
     this.cursor.show();
@@ -94,8 +85,7 @@ export default class PlaybackEngine {
 
   async stop() {
     this.state = playbackStates.STOPPED;
-    if (this.playbackSettings.instrument)
-      this.playbackSettings.instrument.stop();
+    if (this.playbackSettings.instrument) this.playbackSettings.instrument.stop();
     this._clearTimeouts();
     this.scheduler.reset();
     this.cursor.reset();
@@ -106,8 +96,7 @@ export default class PlaybackEngine {
   pause() {
     this.state = playbackStates.PAUSED;
     this.ac.suspend();
-    if (this.playbackSettings.instrument)
-      this.playbackSettings.instrument.stop();
+    if (this.playbackSettings.instrument) this.playbackSettings.instrument.stop();
     this.scheduler.setIterationStep(this.currentIterationStep);
     this.scheduler.pause();
     this._clearTimeouts();
@@ -121,7 +110,7 @@ export default class PlaybackEngine {
 
   jumpToStep(step) {
     this.pause();
-    console.log("Jump to step " + step);
+    console.log('Jump to step ' + step);
     if (this.currentIterationStep > step) {
       this.cursor.hide();
       this.cursor.reset();
@@ -132,19 +121,13 @@ export default class PlaybackEngine {
       ++this.currentIterationStep;
     }
     let schedulerStep = this.currentIterationStep;
-    if (
-      this.currentIterationStep > 0 &&
-      this.currentIterationStep < this.iterationSteps
-    )
-      ++schedulerStep;
+    if (this.currentIterationStep > 0 && this.currentIterationStep < this.iterationSteps) ++schedulerStep;
     this.scheduler.setIterationStep(schedulerStep);
     this.cursor.show();
   }
 
   setVoiceVolume(instrumentId, voiceId, volume) {
-    let playbackInstrument = this.playbackSettings.volumes.instruments.find(
-      i => i.id === instrumentId
-    );
+    let playbackInstrument = this.playbackSettings.volumes.instruments.find(i => i.id === instrumentId);
     let playbackVoice = playbackInstrument.voices.find(v => v.id === voiceId);
     playbackVoice.volume = volume;
   }
@@ -183,16 +166,10 @@ export default class PlaybackEngine {
       });
     }
 
-    this.playbackSettings.instrument.schedule(
-      this.ac.currentTime + audioDelay,
-      scheduledNotes
-    );
+    this.playbackSettings.instrument.schedule(this.ac.currentTime + audioDelay, scheduledNotes);
 
     this.timeoutHandles.push(
-      setTimeout(
-        () => this._iterationCallback(),
-        Math.max(0, audioDelay * 1000 - 40)
-      )
+      setTimeout(() => this._iterationCallback(), Math.max(0, audioDelay * 1000 - 40))
     ); // Subtracting 40 milliseconds to compensate for update delay
   }
 
@@ -214,8 +191,7 @@ export default class PlaybackEngine {
     let duration = note.length.realValue * this.wholeNoteLength;
     if (note.NoteTie) {
       if (Object.is(note.NoteTie.StartNote, note) && note.NoteTie.notes[1]) {
-        duration +=
-          note.NoteTie.notes[1].length.realValue * this.wholeNoteLength;
+        duration += note.NoteTie.notes[1].length.realValue * this.wholeNoteLength;
       } else {
         duration = 0;
       }
@@ -225,12 +201,8 @@ export default class PlaybackEngine {
 
   _getNoteVolume(note) {
     let instrument = note.voiceEntry.ParentVoice.Parent;
-    let playbackInstrument = this.playbackSettings.volumes.instruments.find(
-      i => i.id === instrument.Id
-    );
-    let playbackVoice = playbackInstrument.voices.find(
-      v => v.id === note.voiceEntry.ParentVoice.VoiceId
-    );
+    let playbackInstrument = this.playbackSettings.volumes.instruments.find(i => i.id === instrument.Id);
+    let playbackVoice = playbackInstrument.voices.find(v => v.id === note.voiceEntry.ParentVoice.VoiceId);
     return playbackVoice.volume;
   }
 }

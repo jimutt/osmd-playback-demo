@@ -7,7 +7,7 @@
         indeterminate
       ></v-progress-circular>
     </div>
-    <div class="score" id="osmd-score" v-show="!scoreLoading">
+    <div class="score" ref="scorediv" v-show="!scoreLoading">
     </div>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   async mounted() {
     this.osmd = new OpenSheetMusicDisplay(
-      document.getElementById("osmd-score"), 
+      this.$refs.scorediv, 
       {
         followCursor: true
       }
