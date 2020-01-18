@@ -215,8 +215,11 @@ export default class PlaybackEngine {
     if (note.NoteTie) {
       if (Object.is(note.NoteTie.StartNote, note) && note.NoteTie.notes[1]) {
         duration +=
-          note.NoteTie.notes[1].length.realValue + this.wholeNoteLength;
-      } else duration = 0;
+          note.NoteTie.notes[1].length.realValue * this.wholeNoteLength;
+      } 
+      else {
+        duration = 0;
+      }
     }
     return duration;
   }
