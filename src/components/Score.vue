@@ -32,7 +32,10 @@ export default {
   },
   async mounted() {
     this.osmd = new OpenSheetMusicDisplay(
-      document.getElementById("osmd-score")
+      document.getElementById("osmd-score"), 
+      {
+        followCursor: true
+      }
     );
     this.$emit("osmdInit", this.osmd);
     if (this.score) this.loadScore(this.score);
