@@ -1,3 +1,8 @@
+***
+⚠️ **No further development will be done in this repository, please follow [https://github.com/jimutt/osmd-audio-player](https://github.com/jimutt/osmd-audio-player) for an improved and more user friendly OSMD audio playback extension.** 
+⚠️
+***
+
 # OSMD Playback Demo
 Demo available on [https://heuristic-williams-b11ca6.netlify.com/](https://heuristic-williams-b11ca6.netlify.com/)
 
