@@ -10,7 +10,7 @@
     "axios": "^0.18.1",
     "opensheetmusicdisplay": "git://github.com/opensheetmusicdisplay/opensheetmusicdisplay.git#develop",
     "soundfont-player": "^0.10.7",
-    "vue": "^2.6.11",
+    "vue": "^3.0.0",
     "vuetify": "^1.5.22"
   },
   "devDependencies": {
